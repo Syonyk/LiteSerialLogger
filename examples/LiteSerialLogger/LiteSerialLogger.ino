@@ -52,6 +52,23 @@ void setup() {
   LiteSerial.println((word)50000, HEX);
   LiteSerial.println((long)-1234567, HEX);
   LiteSerial.println((unsigned long)4294967295, HEX);
+
+  // Test max length strings for DEBUG_ASSERT
+  LiteSerial.print((char)-128);
+  LiteSerial.print(F("\n"));
+  LiteSerial.print((byte)255);
+  LiteSerial.print(F("\n"));
+  LiteSerial.print((int)0x8000);
+  LiteSerial.print(F("\n"));
+  LiteSerial.print((word)0xffff);
+  LiteSerial.print(F("\n"));
+  LiteSerial.print((long)0x80000000);
+  LiteSerial.print(F("\n"));
+  LiteSerial.print((unsigned long)0xffffffff);
+  LiteSerial.print(F("\n"));
+  LiteSerial.print((float)1234578901234567890.678);
+  LiteSerial.print(F("\n"));
+
 }
 
 void loop() {

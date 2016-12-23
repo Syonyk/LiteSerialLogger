@@ -33,6 +33,9 @@ static const char crlf[] PROGMEM = "\r\n";
 
 #include "LiteSerialLogger.h"
 
+// Include this to compile in some validation checks on buffer length.
+//#define DEBUG_ASSERT
+
 /**
  * This is based on the code from the Arduino HardwareSerial.begin() function.
  * 
@@ -131,49 +134,79 @@ int LiteSerialLogger::print(const char *message) {
 
 int LiteSerialLogger::print(const char &value, const byte base) {
   // Char is between -128 and 128.  So, 4 characters plus a null.
-  // Hex can print 0xffff (formatting is limited in printf): 6 + null.
-  char buffer[7];
+  // Hex can print ff : 2 + null.
+  char buffer[5];
   itoa(value, buffer, base);
+#ifdef DEBUG_ASSERT
+  if (strlen(buffer) >= sizeof(buffer)) {
+      this->println(F("ERROR: String length exceeds buffer size!"));
+  }
+#endif
   return print(buffer);
 }
 
 int LiteSerialLogger::print(const byte &value, const byte base) {
   // Byte is between 0 and 255.  So, 3 characters plus a null.
-  // Hex, though - 0xffff - 6 characters plus a null
-  char buffer[7];
+  // Hex, though - ff - 2 characters plus a null
+  char buffer[4];
   utoa(value, buffer, base);
+#ifdef DEBUG_ASSERT
+  if (strlen(buffer) >= sizeof(buffer)) {
+      this->println(F("ERROR: String length exceeds buffer size!"));
+  }
+#endif
   return print(buffer);
 }
 
 int LiteSerialLogger::print(const int &value, const byte base) {
   // Int: -32768 to 32767: 6 plus null.
-  // Hex: 0xffff - 6 plus null.
+  // Hex: ffff - 4 plus null.
   char buffer[7];
   itoa(value, buffer, base);
+#ifdef DEBUG_ASSERT
+  if (strlen(buffer) >= sizeof(buffer)) {
+      this->println(F("ERROR: String length exceeds buffer size!"));
+  }
+#endif
   return print(buffer);
 }
 
 int LiteSerialLogger::print(const word &value, const byte base) {
   // Word: 0 to 65535: 5 plus null.
-  // Hex: 0xffff: 6 plus null.
-  char buffer[7];
+  // Hex: ffff: 4 plus null.
+  char buffer[6];
   utoa(value, buffer, base);
+#ifdef DEBUG_ASSERT
+  if (strlen(buffer) >= sizeof(buffer)) {
+      this->println(F("ERROR: String length exceeds buffer size!"));
+  }
+#endif
   return print(buffer);
 }
 
 int LiteSerialLogger::print(const long &value, const byte base) {
   // Long: -2147483648 to 2147483647: 11 plus null 
-  // Hex: 0xffffffff: 10 plus null.
+  // Hex: ffffffff: 8 plus null.
   char buffer[12];
   ltoa(value, buffer, base);
+#ifdef DEBUG_ASSERT
+  if (strlen(buffer) >= sizeof(buffer)) {
+      this->println(F("ERROR: String length exceeds buffer size!"));
+  }
+#endif
   return print(buffer);
 }
 
 int LiteSerialLogger::print(const unsigned long &value, const byte base) {
   // Unsigned Long: 0 to 4294967295: 10 plus null 
-  // Hex: 0xffffffff: 10 plus null.
+  // Hex: ffffffff: 8 plus null.
   char buffer[11];
   ultoa(value, buffer, base);
+#ifdef DEBUG_ASSERT
+  if (strlen(buffer) >= sizeof(buffer)) {
+      this->println(F("ERROR: String length exceeds buffer size!"));
+  }
+#endif
   return print(buffer);
 }
 
@@ -184,9 +217,15 @@ int LiteSerialLogger::print(const float &value) {
   // It will be space padded.  Deal.
 
   // No, really.  Why are you using a float in an Arduino sketch?
-  char buffer[16];
+  // Formatting floats is complex, so I'm using an overly large buffer here.
+  // Seriously.  Don't use this in your code!
+  char buffer[64];
   dtostrf(value, 15, 5, buffer);
-
+#ifdef DEBUG_ASSERT
+  if (strlen(buffer) >= sizeof(buffer)) {
+      this->println(F("ERROR: String length exceeds buffer size!"));
+  }
+#endif
   return print(buffer);
 }
 
