@@ -145,6 +145,10 @@ int LiteSerialLogger::print(const char &value, const byte base) {
   return print(buffer);
 }
 
+int LiteSerialLogger::print() {
+  return 0;
+}
+
 int LiteSerialLogger::print(const byte &value, const byte base) {
   // Byte is between 0 and 255.  So, 3 characters plus a null.
   // Hex, though - ff - 2 characters plus a null
@@ -232,6 +236,10 @@ int LiteSerialLogger::print(const float &value) {
 // The println series: Same thing as above, with a CRLF appended.
 // The CRLF in progmem is explicitly cast to a __FlashStringHelper so the proper
 // function to extract it from program memory is called.
+
+int LiteSerialLogger::println() {
+  return print(reinterpret_cast<const __FlashStringHelper*>(crlf));
+}
 
 int LiteSerialLogger::println(const __FlashStringHelper* message) {
   int bytes_written = print(message);

@@ -37,6 +37,9 @@ public:
   // works properly.
   int print(const __FlashStringHelper* message);
   int print(const char *message);
+  
+  // Null print, just for completeness sake.
+  int print();
 
   // 8 bit types, printed in specified format, with no newline appended.
   // This prints the decimal or hexadecimal value of the byte.
@@ -54,6 +57,7 @@ public:
   int print(const float &value);
 
   // Same stuff, with a newline.
+  int println();
   int println(const __FlashStringHelper* message);
   int println(const char *message);
   int println(const char &value, const byte base = DEC);
